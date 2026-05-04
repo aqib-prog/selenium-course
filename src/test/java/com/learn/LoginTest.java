@@ -26,7 +26,7 @@ LoginPage loginPage;
     options.addArguments("--no-sandbox");
     options.addArguments("--disable-dev-shm-usage");
 
-    driver = new ChromeDriver();
+    driver = new ChromeDriver(options);
     driver.get("https://www.saucedemo.com");
     loginPage = new LoginPage(driver);
 }
