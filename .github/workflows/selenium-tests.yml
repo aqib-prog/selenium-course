@@ -26,6 +26,10 @@ jobs:
       - name: Run Tests
         run: mvn test
 
+      - name: List target directory
+        run: find target -type d
+        if: always()
+
       - name: Generate Allure Report
         run: mvn allure:report
         if: always()
