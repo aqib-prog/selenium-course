@@ -23,6 +23,9 @@ jobs:
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo apt-get install -y google-chrome-stable
 
+      - name: Create Screenshot folder
+        run: mkdir -p screenshots
+
       - name: Run Tests
         run: mvn test
 
