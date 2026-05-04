@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.util.List;
 
 public class LoginTest {
-LoginPage loginPage;
+private ThreadLocal<LoginPage> loginPage = new ThreadLocal<>();
 
 @DataProvider(name="loginData")
 public Object[][] getLoginData(){
@@ -36,12 +36,12 @@ public Object[][] getLoginData(){
         options.addArguments("--disable-dev-shm-usage");
         driver.set(new ChromeDriver(options));
         driver.get().get("https://www.saucedemo.com");
-        loginPage = new LoginPage(driver.get());
+        loginPage.set(new LoginPage(driver.get()));
     }
 
 @Test
     public void validLogin(){
-    loginPage.login("standard_user", "secret_sauce");
+    loginPage.get().login("standard_user", "secret_sauce");
 
     WebDriverWait wait = new WebDriverWait(driver.get(), Duration.ofSeconds(10));
     wait.until(ExpectedConditions.urlContains("inventory"));
@@ -51,7 +51,7 @@ public Object[][] getLoginData(){
 
 @Test
 public void verifyProductsPage(){
-    loginPage.login("standard_user", "secret_sauce");
+    loginPage.get().login("standard_user", "secret_sauce");
     InventoryPage inventoryPage = new InventoryPage(driver.get());
     List<String> products = inventoryPage.getAllProductTitles();
 
@@ -63,15 +63,15 @@ public void verifyProductsPage(){
 
 @Test
 public void errorMessageLogin(){
-    loginPage.login("standard_user11", "secret_sauce");
-    String error= loginPage.getErrorMessage();
+    loginPage.get().login("standard_user11", "secret_sauce");
+    String error= loginPage.get().getErrorMessage();
     Assert.assertEquals(error, "Epic sadface: Username and password do not match any user in this service");
 
 }
 
 @Test(dataProvider = "loginData")
 public void dataLoginTest(String username, String password, boolean shouldPass){
-    loginPage.login(username, password);
+    loginPage.get().login(username, password);
 
     if(shouldPass){
         WebDriverWait wait = new WebDriverWait(driver.get(), Duration.ofSeconds(5));
@@ -79,7 +79,7 @@ public void dataLoginTest(String username, String password, boolean shouldPass){
         System.out.println("Login passed for: "+ username);
     }
     else{
-        String error = loginPage.getErrorMessage();
+        String error = loginPage.get().getErrorMessage();
         Assert.assertNotNull(error);
         System.out.println("Error for "+ username + ": "+ error);
     }
@@ -90,6 +90,7 @@ public void dataLoginTest(String username, String password, boolean shouldPass){
     public void teardown(){
     driver.get().quit();
     driver.remove();
+    loginPage.remove();
 }
 
 
