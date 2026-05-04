@@ -15,7 +15,6 @@ import java.time.Duration;
 import java.util.List;
 
 public class LoginTest {
-WebDriver driver;
 LoginPage loginPage;
 
 @DataProvider(name="loginData")
@@ -26,34 +25,34 @@ public Object[][] getLoginData(){
             {"wrong_user", "wrong_pass", false}
     };
 }
-@BeforeMethod
+    private ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    @BeforeMethod
     public void setup(){
-    WebDriverManager.chromedriver().setup();
-
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
-    options.addArguments("--no-sandbox");
-    options.addArguments("--disable-dev-shm-usage");
-
-    driver = new ChromeDriver(options);
-    driver.get("https://www.saucedemo.com");
-    loginPage = new LoginPage(driver);
-}
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        driver.set(new ChromeDriver(options));
+        driver.get().get("https://www.saucedemo.com");
+        loginPage = new LoginPage(driver.get());
+    }
 
 @Test
     public void validLogin(){
     loginPage.login("standard_user", "secret_sauce");
 
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    WebDriverWait wait = new WebDriverWait(driver.get(), Duration.ofSeconds(10));
     wait.until(ExpectedConditions.urlContains("inventory"));
 
-    System.out.println("URL "+ driver.getCurrentUrl());
+    System.out.println("URL "+ driver.get().getCurrentUrl());
 }
 
 @Test
 public void verifyProductsPage(){
     loginPage.login("standard_user", "secret_sauce");
-    InventoryPage inventoryPage = new InventoryPage(driver);
+    InventoryPage inventoryPage = new InventoryPage(driver.get());
     List<String> products = inventoryPage.getAllProductTitles();
 
     // Asset 6 product
@@ -75,7 +74,7 @@ public void dataLoginTest(String username, String password, boolean shouldPass){
     loginPage.login(username, password);
 
     if(shouldPass){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver.get(), Duration.ofSeconds(5));
         wait.until(ExpectedConditions.urlContains("inventory"));
         System.out.println("Login passed for: "+ username);
     }
@@ -89,7 +88,8 @@ public void dataLoginTest(String username, String password, boolean shouldPass){
 
 @AfterMethod
     public void teardown(){
-    driver.quit();
+    driver.get().quit();
+    driver.remove();
 }
 
 
