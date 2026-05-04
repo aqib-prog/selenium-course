@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
@@ -17,6 +18,14 @@ public class LoginTest {
 WebDriver driver;
 LoginPage loginPage;
 
+@DataProvider(name="loginData")
+public Object[][] getLoginData(){
+    return new Object[][]{
+            {"standard_user", "secret_sauce", true},
+            {"locked_out_user", "secret_sauce",false},
+            {"wrong_user", "wrong_pass", false}
+    };
+}
 @BeforeMethod
     public void setup(){
     WebDriverManager.chromedriver().setup();
@@ -61,11 +70,20 @@ public void errorMessageLogin(){
 
 }
 
-@Test
-public void failingTest(){
-    loginPage.login("wrong_user","wrong_passs");
-    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-    wait.until(ExpectedConditions.urlContains("inventory"));
+@Test(dataProvider = "loginData")
+public void dataLoginTest(String username, String password, boolean shouldPass){
+    loginPage.login(username, password);
+
+    if(shouldPass){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        wait.until(ExpectedConditions.urlContains("inventory"));
+        System.out.println("Login passed for: "+ username);
+    }
+    else{
+        String error = loginPage.getErrorMessage();
+        Assert.assertNotNull(error);
+        System.out.println("Error for "+ username + ": "+ error);
+    }
 }
 
 
