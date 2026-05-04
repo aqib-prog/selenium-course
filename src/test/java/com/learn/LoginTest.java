@@ -61,6 +61,13 @@ public void errorMessageLogin(){
 
 }
 
+@Test
+public void failingTest(){
+    loginPage.login("wrong_user","wrong_passs");
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+    wait.until(ExpectedConditions.urlContains("inventory"));
+}
+
 
 @AfterMethod
     public void teardown(){

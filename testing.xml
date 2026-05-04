@@ -1,4 +1,7 @@
 <suite name="SauceDemo Suite" parallel="methods" thread-count="3">
+    <listeners>
+    <listener class-name="com.learn.TestListener"/>
+    </listeners>
     <test name="Login Tests">
         <classes>
             <class name="com.learn.LoginTest"/>
