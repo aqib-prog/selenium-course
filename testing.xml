@@ -1,0 +1,12 @@
+<suite name="SauceDemo Suite">
+    <test name="Login Tests">
+        <classes>
+            <class name="com.learn.LoginTest"/>
+        </classes>
+    </test>
+    <test name="Inventory Tests">
+        <classes>
+            <class name="com.learn.InventoryPage"/>
+        </classes>
+    </test>
+</suite>
