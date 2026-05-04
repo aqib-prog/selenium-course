@@ -1,8 +1,9 @@
-<suite name="SauceDemo Suite" parallel="methods" thread-count="3">
+<suite name="SauceDemo Suite" parallel="tests" thread-count="3">
     <listeners>
     <listener class-name="com.learn.TestListener"/>
     </listeners>
-    <test name="Login Tests">
+    <test name="Chrome Tests">
+        <parameter name="browser" value="chrome"/>
         <classes>
             <class name="com.learn.LoginTest"/>
         </classes>
