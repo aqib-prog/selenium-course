@@ -31,5 +31,5 @@ jobs:
         if: always()
         with:
           name: allure-reports
-          path: target/site/allure-maven-plugin/
+          path: target/allure-maven-plugin/
 
