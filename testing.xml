@@ -1,12 +1,7 @@
-<suite name="SauceDemo Suite">
+<suite name="SauceDemo Suite" parallel="methods" thread-count="3">
     <test name="Login Tests">
         <classes>
             <class name="com.learn.LoginTest"/>
-        </classes>
-    </test>
-    <test name="Inventory Tests">
-        <classes>
-            <class name="com.learn.InventoryPage"/>
         </classes>
     </test>
 </suite>
